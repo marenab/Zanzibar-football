@@ -39,26 +39,6 @@
       zoom: 8,
       maxBounds: bounds // Sets bounds as max
     });
-    
-    // Add football pitches
-    //map.on('click', function(e) {
-  //var features = map.queryRenderedFeatures(e.point, {
-    //layers: ['football-pitch'] // replace this with the name of the layer
-  //});
-
-  //if (!features.length) {
-  //  return;
-  //}
-
-  //var feature = features[0];
-
-  // Add pop-ups
-  //var popup = new mapboxgl.Popup({ offset: [0, -15] })
-    //.setLngLat(feature.geometry.coordinates)
-    //.setHTML('<h3>' + feature.properties.TYPE + '</h3>')
-    //.setLngLat(feature.geometry.coordinates)
-    //.addTo(map);
-//});
 
     // Add clusters
     map.on('load', function() {
@@ -153,6 +133,24 @@
     });
 });
 
+    // Add popups
+    map.on('click', function(e) {
+      var pitches = map.queryRenderedFeatures(e.point, { layers: ['football-pitch'] // name of the layer
+      });
+
+        if (!pitches.length) {
+          return;
+        }
+
+      var pitch = pitches[0];
+
+      var popup = new mapboxgl.Popup({ offset: [0, -15] })
+      .setLngLat(pitch.geometry.coordinates)
+      .setHTML('<h3>' + pitch.properties.TYPE + '</h3>')
+      .setLngLat(pitch.geometry.coordinates)
+      .addTo(map);
+    });  
+      
     // Add zoom and rotation controls to the map.
 map.addControl(new mapboxgl.NavigationControl());
 
