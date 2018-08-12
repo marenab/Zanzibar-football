@@ -20,8 +20,25 @@
       }
     </style>
   </head>
+
   <body>
+      <style>
+        #menu {
+          position: absolute;
+          background: #fff;
+          padding: 10px;
+          font-family: 'Open Sans', sans-serif;
+        }
+      </style>
+  
     <div id='map'></div>
+    <div id='menu'>
+      <input id='cjkpxku8p2jqy2soec3u5z2ym' type='radio' name='rtoggle' value='light'>
+      <label for='light'>light</label>
+      <input id='cjkq2qj0015eb2rmt5uio6mnz' type='radio' name='rtoggle' value='satellite'>
+      <label for='satellite'>satellite</label>
+    </div>
+
     <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoibWFyZW5hYiIsImEiOiJjajV2ajVyZXUwMnN3MzNwNzR3Ynk2cjIyIn0.sI-ynx23EEdpZFbEDu6qjA'; // replace this with your access token
     
@@ -40,8 +57,22 @@
       maxBounds: bounds // Sets bounds as max
     });
 
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl());
+
+  function mapReset() {
+    if (window.innerWidth < 800) {
+      map.setZoom(6.7);
+    } else {
+        map.setZoom(8);
+    }
+  }
+
+  map.on('style.load', function() {
+    mapReset();
+
     // Add clusters
-    map.on('load', function() {
+    //map.on('load', function() {
     // Add a new source from our GeoJSON data and set the
     // 'cluster' option to true. GL-JS will add the point_count property to your source data.
     map.addSource("football-pitch", {
@@ -110,6 +141,19 @@
         }
     });
 
+// Toggle styles
+    var layerList = document.getElementById('menu');
+    var inputs = layerList.getElementsByTagName('input');
+
+    function switchLayer(layer) {
+      var layerId = layer.target.id;
+      map.setStyle('mapbox://styles/marenab/' + layerId);
+    }
+
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].onclick = switchLayer;
+      }
+
     // inspect a cluster on click
     map.on('click', 'clusters', function (e) {
         var features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
@@ -131,7 +175,17 @@
     map.on('mouseleave', 'clusters', function () {
         map.getCanvas().style.cursor = '';
     });
-});
+
+
+        // Change the cursor to a pointer when the mouse is over the pitches layer.
+    map.on('mouseenter', 'football-pitch', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'football-pitch', function () {
+        map.getCanvas().style.cursor = '';
+    });
 
     // Add popups
     map.on('click', function(e) {
@@ -149,21 +203,9 @@
       .setHTML('<h3>' + pitch.properties.TYPE + '</h3>')
       .setLngLat(pitch.geometry.coordinates)
       .addTo(map);
-    });  
-    
-    // Change the cursor to a pointer when the mouse is over the pitches layer.
-    map.on('mouseenter', 'football-pitch', function () {
-        map.getCanvas().style.cursor = 'pointer';
     });
-
-    // Change it back to a pointer when it leaves.
-    map.on('mouseleave', 'football-pitch', function () {
-        map.getCanvas().style.cursor = '';
-    });  
-      
-    // Add zoom and rotation controls to the map.
-map.addControl(new mapboxgl.NavigationControl());
+  });
 
     </script>
-  </body>
+</body>
 </html>
