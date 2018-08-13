@@ -1,3 +1,3 @@
 # Zanzibar-workshop
 
-https://marenab.github.io/Zanzibar-workshop/
+https://marenab.github.io/Zanzibar-football/
